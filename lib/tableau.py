@@ -34,6 +34,7 @@ class Tableau:
                 # we add an artificial variable to run phase 1
                 lp.need_2_phases = True # We will need two phases to run the simplex
                 top_row.append(-1)
+                self.artificialVariables.append(n)
                 self.basicVariables.append(n) # the artificial variable created is basic
                 self.varAssocToConstraint[ind+1]=n
                 artificialConstRows.append(ind+1)
@@ -63,14 +64,14 @@ class Tableau:
                 self.data[i] *= -1 # we want only >0 numbers in the right hand side
                 self.data[i,lp.nbConst+lp.nbVar+artificalVarCount] = 1
                 artificalVarCount +=1
-
-        if not lp.need_2_phases: #top line
+        # top line
+        if not lp.need_2_phases:
             self.data[0] = np.concatenate([lp.objectiveFunction, np.array( [Fraction(0,1)]*(self.width-lp.nbVar))])
         else:
             for line in artificialConstRows:
                 self.data[0,:] += self.data[line,:]
 
-    def transition_phaseI_phaseII(self,objfunc):
+    def transition_phaseI_phaseII(self, objfunc, verboseMode, debugMode):
         """
         Changes the utility function of the Tableau.
         Useful in the transition from phase 1 to phase 2

@@ -6,8 +6,10 @@
 ################################################################################
 
 import argparse
+from time import *
 from random import randint
 from lib import *
+import numpy as np
 
 verboseMode = False
 debugMode = False
@@ -42,7 +44,10 @@ def simplex_choose_entering(tab):
         if tab[0,n-1]<=0:
             n=-1
     elif rule=="Custom":
-        raise NotImplementedError
+        t = np.array([tab[0,i]/np.dot(tab[:,i], tab[:,i]) for i in range(len(tab[0,:]))])
+        n = np.argmax(t)+1
+        if tab[0,n-1]<=0:
+            n=-1
     else:
         raise Exception("Pivot rule is not valid !")
     if verboseMode and n!=-1:
@@ -84,6 +89,7 @@ def simplex_one_phase(tab):
 
 
 def simplex_solve(lp):
+    start_time = time()
     print(lp)
     tab = Tableau(lp)
     if verboseMode:
@@ -98,7 +104,7 @@ def simplex_solve(lp):
             val = tab.get_value_of_solution()
             if (val!=0):
                 raise Infeasible
-            tab.transition_phaseI_phaseII(lp.objectiveFunction)
+            tab.transition_phaseI_phaseII(lp.objectiveFunction, verboseMode, debugMode)
             if verboseMode:
                 print("\n========== PHASE 2 ==========\n")
                 print(tab)
@@ -118,6 +124,7 @@ def simplex_solve(lp):
     print("The value of the objective for this solution is : {0}".format(tab.get_value_of_solution()) )
     print("The number of pivots is : {0}".format(tab.nbPivot))
     print("The pivot rule used : {0}".format(rule))
+    print("The calculation took {0:.3f} seconds".format(time()-start_time))
 
 # ================== MAIN ======================================================
 if __name__ == '__main__':

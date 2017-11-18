@@ -49,6 +49,7 @@ class LinearProgram:
                     first_coef = False
                     obj_func_line += "{0}x_{1} ".format(self.objectiveFunction[i], i+1)
                 elif (self.objectiveFunction[i]<0):
+                    first_coef = False
                     obj_func_line += "{0}x_{1} ".format(self.objectiveFunction[i], i+1)
         output_string+= obj_func_line+"\n"
 
@@ -62,6 +63,7 @@ class LinearProgram:
                     first_coef = False
                     const_line += "{0}x_{1} ".format(frac_print(self.constraintMatrix[j,i]), i+1)
                 elif (self.constraintMatrix[j,i]<0):
+                    first_coef = False
                     const_line += "{0}x_{1} ".format(frac_print(self.constraintMatrix[j,i]), i+1)
 
             const_line += " <= " + frac_print(self.constraintVector[j])
