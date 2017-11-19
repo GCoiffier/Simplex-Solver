@@ -3,7 +3,7 @@
 import argparse
 from random import randint
 
-def generate_lp(output_file, nbVar, nbConst, twophase, hollow):
+def generate_random(output_file, nbVar, nbConst, twophase, hollow):
     thefile = open(output_file, 'w')
     thefile.write("{0}\n".format(nbVar))
     thefile.write("{0}\n".format(nbConst))
@@ -38,6 +38,29 @@ def generate_lp(output_file, nbVar, nbConst, twophase, hollow):
 
     thefile.close()
 
+def generate_klee_minty(output_file,d):
+        """ see https://en.wikipedia.org/wiki/Klee%E2%80%93Minty_cube """
+        thefile = open(output_file, 'w')
+        thefile.write(str(d)+"\n")
+        thefile.write(str(d)+"\n")
+
+        multipleof5 = [5]*d
+        multipleof2 = [1]*d
+        for i in range(1,d):
+            multipleof5[i]= multipleof5[i-1]*5
+            multipleof2[i]= multipleof2[i-1]*2
+        multipleof5 = [ str(x) for x in multipleof5 ]
+        multipleof2 = [ str(x) for x in multipleof2 ]
+        thefile.write(" ".join([multipleof2[d-1-i] for i in range(d)])) # Objective function
+        thefile.write("\n")
+        thefile.write(" ".join(multipleof5)) # Constraint vector
+        thefile.write("\n")
+        for i in range(d): # Constraint matrix
+            for j in range(d):
+                thefile.write("boup")
+
+        thefile.close()
+
 # ================== MAIN ======================================================
 if __name__ == '__main__':
 
@@ -45,10 +68,14 @@ if __name__ == '__main__':
     argparser.add_argument('filename', help="name of the output thefile.")
     argparser.add_argument('-n', help="number of variables")
     argparser.add_argument('-m', help="number of constraints")
-    argparser.add_argument('-twophase', action="store_true", help="Allow the generator to output a LP that need 2 phases")
-    argparser.add_argument('-hollow', action="store_true", help="Create a matrix with a lot of 0s")
+    argparser.add_argument('-random', action="store_true", help="generate a random LP")
+    argparser.add_argument('-twophase', action="store_true", help="Random generation parameter. Allow the generator to output a LP that need 2 phases")
+    argparser.add_argument('-hollow', action="store_true", help="Random generation parameter. Create a matrix with a lot of 0s")
+    argparser.add_argument('-klee-minty', help="Generate the Klee Minty cube of dimension d")
     options=argparser.parse_args()
 
     filename = options.filename
-
-    generate_lp(filename, int(options.n), int(options.m), options.twophase, options.hollow)
+    if options.random:
+        generate_random(filename, int(options.n), int(options.m), options.twophase, options.hollow)
+    elif options.klee_minty is not None:
+        generate_klee_minty(filename,int(options.klee_minty))

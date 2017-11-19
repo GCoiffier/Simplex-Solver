@@ -44,7 +44,7 @@ def simplex_choose_entering(tab):
         if tab[0,n-1]<=0:
             n=-1
     elif rule=="Custom":
-        t = np.array([tab[0,i]/np.dot(tab[:,i], tab[:,i]) for i in range(len(tab[0,:]))])
+        t = np.array([tab[0,i]/np.dot(tab[:,i], tab[:,i]) for i in range(len(tab[0,0:-1]))])
         n = np.argmax(t)+1
         if tab[0,n-1]<=0:
             n=-1
@@ -75,7 +75,7 @@ def simplex_one_phase(tab):
         if debugMode:
             print("Basic variables : " + str(tab.get_basic()))
             print("Non basic variables : "+ str(tab.get_non_basic()))
-            print("Variables associated to constraints : " + str(tab.varAssocToConstraint[1::]) +"\n")
+            print("Variables associated to constraints : " + str(tab.varAssocToConstraint) +"\n")
         inVar = simplex_choose_entering(tab)
         if inVar==-1:
             # We are done : no variable can improve the solution
@@ -95,6 +95,8 @@ def simplex_solve(lp):
     if verboseMode:
         print("The initial tableau is : \n")
         print(tab)
+        if debugMode:
+            print("Artificial variables : "+str(tab.artificialVariables)+"\n")
     try:
         if lp.need_2_phases:
             # compute phase 1
@@ -104,6 +106,8 @@ def simplex_solve(lp):
             val = tab.get_value_of_solution()
             if (val!=0):
                 raise Infeasible
+            if debugMode:
+                print("END OF PHASE 1\n")
             tab.transition_phaseI_phaseII(lp.objectiveFunction, verboseMode, debugMode)
             if verboseMode:
                 print("\n========== PHASE 2 ==========\n")

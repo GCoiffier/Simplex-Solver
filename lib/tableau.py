@@ -22,11 +22,11 @@ class Tableau:
         top_row = [Fraction(0,1)]*(lp.nbVar+lp.nbConst)
         n = lp.nbVar+lp.nbConst+1 # will be the total number of columns in the tableau
 
-        self.nonBasicVariables = []
-        self.basicVariables = []
-        self.artificialVariables = []
-        self.varAssocToConstraint = [-1]*(lp.nbConst+1) # gives the basic variable expressed by constraint i+1
-
+        self.nonBasicVariables = set()
+        self.basicVariables = set()
+        self.artificialVariables = set() # keep trace of artificialVariables
+        self.varAssocToConstraint = dict() # gives the basic variable expressed by constraint i
+        self.constraintAssocToVar = dict() # give the constraint that expresses variable x
         artificialConstRows = []
 
         for ind,x in enumerate(lp.constraintVector):
@@ -34,17 +34,19 @@ class Tableau:
                 # we add an artificial variable to run phase 1
                 lp.need_2_phases = True # We will need two phases to run the simplex
                 top_row.append(-1)
-                self.artificialVariables.append(n)
-                self.basicVariables.append(n) # the artificial variable created is basic
+                self.artificialVariables.add(n)
+                self.basicVariables.add(n) # the artificial variable created is basic
                 self.varAssocToConstraint[ind+1]=n
+                self.constraintAssocToVar[n]=ind+1
                 artificialConstRows.append(ind+1)
                 n +=1
             else:
                 slack_var = ind+lp.nbVar+1
                 self.varAssocToConstraint[ind+1]=slack_var
-                self.basicVariables.append(slack_var) # the slack variable is basic
+                self.constraintAssocToVar[slack_var]=ind+1
+                self.basicVariables.add(slack_var) # the slack variable is basic
 
-        self.nonBasicVariables = [x for x in range(1,n) if x not in self.basicVariables]
+        self.nonBasicVariables = set([x for x in range(1,n) if x not in self.basicVariables])
         top_row.append(0) # initial value of the objective function
 
         self.width = n # width of tableau = number of columns
@@ -71,19 +73,58 @@ class Tableau:
             for line in artificialConstRows:
                 self.data[0,:] += self.data[line,:]
 
+    def delete_column(self,i):
+        """ delete column i"""
+        self.data = np.delete(self.data, i, axis=1)
+        self.width -= 1
+
+    def delete_row(self,i):
+        """ delete row i"""
+        self.data = np.delete(self.data, i, axis=0)
+        self.height -= 1
+
     def transition_phaseI_phaseII(self, objfunc, verboseMode, debugMode):
         """
-        Changes the utility function of the Tableau.
-        Useful in the transition from phase 1 to phase 2
+        Changes the utility function of the Tableau
+        and delete the artificial variables
         """
+
+        # 1/ Check for remaining artifical variables in the basis
+        artificialBasicVariables = self.basicVariables & self.artificialVariables
+        if (artificialBasicVariables):
+            # additionnal pivots have to be done
+            print("STILL ARTIFICIAL VARIABLE IN THE BASIS\n Proceding at killing them")
+            for x in artificialBasicVariables :
+                constr = self.constraintAssocToVar[x]
+                replace = -1
+                for i in range(self.width-1):
+                    if (i+1) in (self.nonbasicVariables-self.artificialVariables) and self.data[const,i]>0:
+                        replace=i+1
+                        break
+                if replace==-1:
+                    # No variable to replace the artificial variable : Constraint must be deleted
+                    self.basicVariables.remove(x)
+                    self.delete_row(const)
+
+
+        # 2/ Reload initial objective functions and apply pivots according to current basis
         self.data[0] = np.concatenate([objfunc, np.array( [Fraction(0,1)]*(self.width-len(objfunc)))])
         if debugMode:
-            print("Import initial objective function :")
+            print("Import initial objective function:\n")
             print(self)
         for x in self.basicVariables:
             if self.data[0,x-1]!=0:
                 i = np.argmax(self.data[1::,x-1])+1 #the line with the 1
                 self.data[0] -= self.data[i]*self.data[0,x-1]/self.data[i,x-1]
+
+        # 3/ Delete artificial variables
+        for x in range(len(self.artificialVariables)):
+            self.delete_column(self.width-2)
+        self.nonBasicVariables = self.nonBasicVariables - self.artificialVariables
+        self.artificialVariables = []
+        if debugMode:
+            print("Successfully deleted artifical variables from the tableau :\n")
+            print(self)
 
     def get_basic(self):
         return self.basicVariables
@@ -102,11 +143,13 @@ class Tableau:
     def get_solution_variables(self, n):
         """ Returns a string containing the value of the n first variables and their values in the current tableau"""
         l = []
-        for i in range(n):
-            if (i+1) in self.basicVariables:
-                l.append("x_{0} = {1}".format(i+1, self.data[self.varAssocToConstraint[i+1],-1]))
+        for x in range(1,n+1):
+            if x in self.basicVariables:
+                # if basic, the variable equals the right hand side of the constraint in which it is expressed
+                assocConstraint = self.constraintAssocToVar[x]
+                l.append("x_{0} = {1}".format(x, self.data[assocConstraint,-1]))
             else:
-                l.append("x_{0} = 0".format(i+1))
+                l.append("x_{0} = 0".format(x))
         return ", ".join(l)
 
     def do_pivot(self, enteringVar, leavingVar, leavingInd):
@@ -117,11 +160,13 @@ class Tableau:
         """
         self.nbPivot += 1
         self.varAssocToConstraint[leavingInd]=enteringVar
+        self.constraintAssocToVar.pop(leavingVar, None)
+        self.constraintAssocToVar[enteringVar] = leavingInd
 
         # update the basicVariables and nonBasicVariables lists
         self.basicVariables.remove(leavingVar)
-        self.nonBasicVariables.append(leavingVar)
-        self.basicVariables.append(enteringVar)
+        self.nonBasicVariables.add(leavingVar)
+        self.basicVariables.add(enteringVar)
         self.nonBasicVariables.remove(enteringVar)
 
         # do pivot on the matrix
