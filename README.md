@@ -3,8 +3,7 @@
 
 ## How to use the program
 I implemented the simplex in python. To run the program, the command is:
-
-`python3 simplex.py [-v] [-d] [-r rule] file `
+    `python3 simplex.py [-v] [-d] [-r rule] file `
 
 where options are the following:
 - `file` The input file. All inputs file are in the input folder.
@@ -15,7 +14,7 @@ where options are the following:
 
 To generate random Linear Program, you can use the LPgenerator.py script. To run this script, run the following command:
 
-` python3 LPgenerator.py [-n N] [-m M] [-random | -klee-minty D] [-twophase] [-hollow] outputfile
+    `python3 LPgenerator.py [-n N] [-m M] [-random | -klee-minty D] [-twophase] [-hollow] outputfile`
 
 where options are the following:
 - `-n` The number of variables
@@ -41,5 +40,5 @@ is unfeasible. However, they can be equal to zero. In that case, we need to perf
 to get the variables out of the basis (and if no pivot can be performed, one can show that we can suppress the
 corresponding constraint without changing the solution of the LP).
 
-    This method has been implemented in my simplex, but I did not find any example where artificial variables are
+This method has been implemented in my simplex, but I did not find any example where artificial variables are
 present in the basis at the end of phase I, so I was unable to test it.
