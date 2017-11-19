@@ -3,6 +3,7 @@
 
 ## How to use the program
 I implemented the simplex in python. To run the program, the command is:
+
     `python3 simplex.py [-v] [-d] [-r rule] file `
 
 where options are the following:
