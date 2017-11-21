@@ -3,7 +3,7 @@ from fractions import *
 # ========== Utility function over fractions ===================================
 def convert(u):
     """
-    u is a string representing a rationnal number.
+    u is a string representing a rationnal number (of general form [-]a[/b])
     Outputs the fraction object whose value is described in u
     """
     u = u.split("/")

@@ -1,0 +1,33 @@
+OUTPUT 
+The input linear program is: 
+
+Maximize  3x_5 + 91x_7 + 92x_9 
+Such that 74x_1 + 5x_6 + 55x_8  <= 71
+          93x_1 + 80x_10  <= 73
+          84x_1 + 67x_2 + 28x_4 + 38x_7 + 71x_9  <= 51
+          4x_1 + 66x_2 + 7x_4 + 40x_9 + 36x_10  <= 52
+          56x_8 + 49x_9  <= 97
+          3x_1 + 31x_2 + 69x_3 + 90x_4 + 39x_6 + 27x_8 + 48x_9 + 23x_10  <= 50
+          61x_1 + 92x_2 + 10x_5 + 66x_7 + 24x_8 + 96x_9  <= 3
+          96x_2 + 72x_3 + 71x_6 + 95x_9 + 48x_10  <= 81
+          22x_1 + 73x_6 + 19x_7 + 46x_8 + 66x_9 + 73x_10  <= 50
+          43x_2 + 72x_5 + 94x_6 + 95x_9 + 21x_10  <= 61
+          92x_2 + 81x_3 + 56x_4 + 2x_6 + 15x_7 + 16x_8 + 18x_10  <= 53
+          98x_5 + 96x_6 + 79x_7 + 16x_9  <= 68
+          93x_2 + 81x_3 + 68x_4 + 15x_5 + 80x_8 + 60x_9  <= 96
+          99x_1 + 3x_4 + 22x_6 + 15x_9 + 67x_10  <= 31
+          37x_2 + 58x_3 + 20x_5 + 70x_6 + 95x_7 + 83x_8 + 39x_9  <= 29
+          92x_3 + 32x_4 + 96x_7 + 88x_8 + 18x_9 + 61x_10  <= 26
+          5x_2 + 24x_6 + 74x_7 + 39x_8 + 87x_10  <= 28
+          98x_2 + 34x_4 + 42x_7  <= 18
+          83x_1 + 13x_4 + 100x_5 + 62x_7  <= 46
+          98x_1 + 13x_4 + 53x_5 + 78x_7 + 22x_8 + 3x_10  <= 23
+          x_1, x_2, x_3, x_4, x_5, x_6, x_7, x_8, x_9, x_10 are non-negative
+
+The point (0,...,0) is a feasible solution. Only one phase is needed
+
+An optimal solution is : x_1 = 0, x_2 = 0, x_3 = 0, x_4 = 0, x_5 = 0, x_6 = 0, x_7 = 1/22, x_8 = 0, x_9 = 0, x_10 = 0
+The value of the objective for this solution is : 91/22
+The number of pivots is : 2
+The pivot rule used : MaxCoeff
+The calculation took 0.008 seconds

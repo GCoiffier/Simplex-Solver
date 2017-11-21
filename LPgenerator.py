@@ -44,20 +44,25 @@ def generate_klee_minty(output_file,d):
         thefile.write(str(d)+"\n")
         thefile.write(str(d)+"\n")
 
-        multipleof5 = [5]*d
-        multipleof2 = [1]*d
-        for i in range(1,d):
+        multipleof5 = [5]*(d+1)
+        multipleof2 = [1]*(d+1)
+        for i in range(1,d+1):
             multipleof5[i]= multipleof5[i-1]*5
             multipleof2[i]= multipleof2[i-1]*2
         multipleof5 = [ str(x) for x in multipleof5 ]
         multipleof2 = [ str(x) for x in multipleof2 ]
         thefile.write(" ".join([multipleof2[d-1-i] for i in range(d)])) # Objective function
         thefile.write("\n")
-        thefile.write(" ".join(multipleof5)) # Constraint vector
+        thefile.write(" ".join([multipleof5[i] for i in range(d)])) # Constraint vector
         thefile.write("\n")
-        for i in range(d): # Constraint matrix
-            for j in range(d):
-                thefile.write("boup")
+
+        multipleof2[1]="1"
+        for i in range(1,d+1): # Constraint matrix
+            l = multipleof2[i:0:-1]
+            for j in range(d-i):
+                l.append("0")
+            thefile.write(" ".join(l))
+            thefile.write("\n")
 
         thefile.close()
 

@@ -15,7 +15,7 @@ class LinearProgram:
     """
 
     # _____ Parsing and initialisation _____
-    def __init__(self,filename="test1.in"):
+    def __init__(self,filename):
         # retrieving data from file
         f = open(filename, 'r')
         input_data = [ s.strip() for s in f.readlines()]

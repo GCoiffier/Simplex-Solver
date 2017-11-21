@@ -44,7 +44,12 @@ def simplex_choose_entering(tab):
         if tab[0,n-1]<=0:
             n=-1
     elif rule=="Custom":
-        t = np.array([tab[0,i]/np.dot(tab[:,i], tab[:,i]) for i in range(len(tab[0,0:-1]))])
+        t = tab[0,0:-1].copy()
+        for i in range(len(t)):
+            if np.dot(tab[:,i], tab[:,i])!=0:
+                t[i] /= np.dot(tab[:,i], tab[:,i])
+            else:
+                t[i]=-1
         n = np.argmax(t)+1
         if tab[0,n-1]<=0:
             n=-1
@@ -66,9 +71,10 @@ def simplex_choose_leaving(tab, enteringVar):
     if n==-1: # no upper bound
         raise Unbounded
     var = tab.varAssocToConstraint[n] # find the basic variable associated with row n
+    assert(tab.constraintAssocToVar[var]==n) # just to make sure
     if verboseMode:
         print("The leaving variable is x_{0} \n".format(var))
-    return var,n
+    return var
 
 def simplex_one_phase(tab):
     while True:
@@ -81,8 +87,8 @@ def simplex_one_phase(tab):
             # We are done : no variable can improve the solution
             return tab
         else:
-            outVar,outInd = simplex_choose_leaving(tab, inVar)
-            tab.do_pivot(inVar, outVar, outInd)
+            outVar = simplex_choose_leaving(tab, inVar)
+            tab.do_pivot(inVar, outVar)
         if verboseMode:
             print(tab)
     return
@@ -111,9 +117,10 @@ def simplex_solve(lp):
             tab.transition_phaseI_phaseII(lp.objectiveFunction, verboseMode, debugMode)
             if verboseMode:
                 print("\n========== PHASE 2 ==========\n")
+                print("After reloading the initial objective function, the tableau is:\n")
                 print(tab)
         else:
-            print("The point (0,...,0) is a feasible solution. Only one phase is needed")
+            print("The point (0,...,0) is a feasible solution. Only one phase is needed\n")
         # compute phase 2
         tab = simplex_one_phase(tab)
 

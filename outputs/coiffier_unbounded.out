@@ -1,0 +1,27 @@
+OUTPUT 
+The input linear program is: 
+
+Maximize  1x_1 + 1x_3 
+Such that 1x_1  <= 1
+          1x_2 -1x_3  <= 1
+          x_1, x_2, x_3 are non-negative
+
+The initial tableau is : 
+
+1   0   1   0   0    |  0
+----------------------------
+1   0   0   1   0    |  1
+0   1   -1  0   1    |  1
+
+The point (0,...,0) is a feasible solution. Only one phase is needed
+
+The entering variable is x_1
+The leaving variable is x_4 
+
+0   0   1   -1  0    |  -1
+-----------------------------
+1   0   0   1   0    |  1
+0   1   -1  0   1    |  1
+
+The entering variable is x_3
+This linear program is UNBOUNDED

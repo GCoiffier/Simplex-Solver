@@ -1,0 +1,15 @@
+OUTPUT 
+The input linear program is: 
+
+Maximize  1x_1 + 1x_2 
+Such that -2x_1 -1x_2  <= -8
+          -1x_1 + 2x_2  <= 0
+          6x_1 -5x_2  <= 45
+          1x_1  <= 20
+          x_1, x_2 are non-negative
+
+An optimal solution is : x_1 = 90/7, x_2 = 45/7
+The value of the objective for this solution is : 135/7
+The number of pivots is : 3
+The pivot rule used : MaxCoeff
+The calculation took 0.002 seconds

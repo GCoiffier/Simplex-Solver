@@ -1,0 +1,55 @@
+OUTPUT 
+The input linear program is: 
+
+Maximize  50x_1 + 120x_2 
+Such that 1x_1  <= 100
+          1x_2  <= 100
+          1x_1 + 1x_2  <= 100
+          10x_1 + 50x_2  <= 4000
+          x_1, x_2 are non-negative
+
+The initial tableau is : 
+
+50    120   0     0     0     0      |  0
+--------------------------------------------
+1     0     1     0     0     0      |  100
+0     1     0     1     0     0      |  100
+1     1     0     0     1     0      |  100
+10    50    0     0     0     1      |  4000
+
+The point (0,...,0) is a feasible solution. Only one phase is needed
+The entering variable is x_1
+The leaving variable is x_3 
+
+0      120    -50    0      0      0       |  -5000
+------------------------------------------------------
+1      0      1      0      0      0       |  100
+0      1      0      1      0      0       |  100
+0      1      -1     0      1      0       |  0
+0      50     -10    0      0      1       |  3000
+
+The entering variable is x_2
+The leaving variable is x_5 
+
+0      0      70     0      -120   0       |  -5000
+------------------------------------------------------
+1      0      1      0      0      0       |  100
+0      0      1      1      -1     0       |  100
+0      1      -1     0      1      0       |  0
+0      0      40     0      -50    1       |  3000
+
+The entering variable is x_3
+The leaving variable is x_6 
+
+0       0       0       0       -65/2   -7/4     |  -10250
+-------------------------------------------------------------
+1       0       0       0       5/4     -1/40    |  25
+0       0       0       1       1/4     -1/40    |  25
+0       1       0       0       -1/4    1/40     |  75
+0       0       1       0       -5/4    1/40     |  75
+
+An optimal solution is : x_1 = 25, x_2 = 75
+The value of the objective for this solution is : 10250
+The number of pivots is : 3
+The pivot rule used : Bland
+The calculation took 0.003 seconds

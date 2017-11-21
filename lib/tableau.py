@@ -93,25 +93,20 @@ class Tableau:
         artificialBasicVariables = self.basicVariables & self.artificialVariables
         if (artificialBasicVariables):
             # additionnal pivots have to be done
-            print("STILL ARTIFICIAL VARIABLE IN THE BASIS\n Proceding at killing them")
+            if verboseMode:
+                print("STILL ARTIFICIAL VARIABLE IN THE BASIS\nPivoting with slack variables to get rid of them...")
             for x in artificialBasicVariables :
-                constr = self.constraintAssocToVar[x]
-                replace = -1
-                for i in range(self.width-1):
-                    if (i+1) in (self.nonbasicVariables-self.artificialVariables) and self.data[const,i]>0:
-                        replace=i+1
-                        break
-                if replace==-1:
-                    # No variable to replace the artificial variable : Constraint must be deleted
-                    self.basicVariables.remove(x)
-                    self.delete_row(const)
-
+                y = x-(self.height-2) # number of constraints -1
+                if verboseMode:
+                    print("The entering variable is x_{0}".format(y))
+                    print("The leaving variable is x_{0} \n".format(x))
+                #do a pivot
+                self.do_pivot(y,x)
+                if verboseMode:
+                    print(self)
 
         # 2/ Reload initial objective functions and apply pivots according to current basis
         self.data[0] = np.concatenate([objfunc, np.array( [Fraction(0,1)]*(self.width-len(objfunc)))])
-        if debugMode:
-            print("Import initial objective function:\n")
-            print(self)
         for x in self.basicVariables:
             if self.data[0,x-1]!=0:
                 i = np.argmax(self.data[1::,x-1])+1 #the line with the 1
@@ -122,9 +117,6 @@ class Tableau:
             self.delete_column(self.width-2)
         self.nonBasicVariables = self.nonBasicVariables - self.artificialVariables
         self.artificialVariables = []
-        if debugMode:
-            print("Successfully deleted artifical variables from the tableau :\n")
-            print(self)
 
     def get_basic(self):
         return self.basicVariables
@@ -152,12 +144,12 @@ class Tableau:
                 l.append("x_{0} = 0".format(x))
         return ", ".join(l)
 
-    def do_pivot(self, enteringVar, leavingVar, leavingInd):
+    def do_pivot(self, enteringVar, leavingVar):
         """
         Apply the pivot.
         enteringVar -> the variable that will replace leavingVar in the basis.
-        leavingInd -> the index of the constraint representing leavingVar in the tableau
         """
+        leavingInd = self.constraintAssocToVar[leavingVar]
         self.nbPivot += 1
         self.varAssocToConstraint[leavingInd]=enteringVar
         self.constraintAssocToVar.pop(leavingVar, None)
