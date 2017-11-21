@@ -4,7 +4,7 @@
 ## How to use the program
 I implemented the simplex in python. To run the program, the command is:
 
-    python3 simplex.py [-v] [-d] [-r rule] file
+    python3 coiffier_simplex.py [-v] [-d] [-r rule] file
 
 where options are the following:
 - `file` The input file. All inputs file are in the input folder.
@@ -28,7 +28,7 @@ note that most of the time, the random problems generated with two phases wil be
 
 ## Code architecture
 My implementation is divided into 5 python files :
-- `simplex.py` The main file, that contain the main() function and the implementation of the simplex method. Main logic of the program is in there.
+- `coiffier_simplex.py` The main file, that contain the main() function and the implementation of the simplex method. Main logic of the program is in there.
 - `linearProgram.py` The definition of a class representing a linear program
 - `tableau.py` The definition of the class Tableau.
 - `utilities.py` Utility function to display fractions into the console
